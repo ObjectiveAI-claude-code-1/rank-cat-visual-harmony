@@ -1,0 +1,122 @@
+{
+  "type": "vector.function",
+  "input_schema": {
+    "type": "array",
+    "description": "An array of cat photos to be ranked",
+    "minItems": 2,
+    "maxItems": 100,
+    "items": {
+      "type": "object",
+      "description": "A cat photo with its URL and optional metadata",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The URL or file path to the cat photo image"
+        },
+        "title": {
+          "type": "string",
+          "description": "An optional title or label for the photo"
+        },
+        "photographer": {
+          "type": "string",
+          "description": "An optional credit to the photographer"
+        }
+      },
+      "required": [
+        "url"
+      ]
+    }
+  },
+  "output_length": {
+    "$starlark": "len(input)"
+  },
+  "input_split": {
+    "$starlark": "[[photo] for photo in input]"
+  },
+  "input_merge": {
+    "$starlark": "[photo_array[0] for photo_array in input]"
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Of these cat photographs, which one demonstrates the most excellent visual balance and spatial distribution? Look for a photo where the cat and background elements work together in proportionate relationship, with visual weight distributed evenly and intentionally throughout the frame."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"text\", \"text\": \"Photo: \" + (photo.get(\"title\") or \"Untitled\") + (\" by \" + photo.get(\"photographer\") if photo.get(\"photographer\") else \"\")}] for photo in input]"
+      },
+      "output": {
+        "$jmespath": "output.scores"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Which of these cat photographs best demonstrates color and tone unity? Select the one where colors complement rather than compete, and where the cat's coloring harmonizes with the background."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"text\", \"text\": \"Photo: \" + (photo.get(\"title\") or \"Untitled\") + (\" by \" + photo.get(\"photographer\") if photo.get(\"photographer\") else \"\")}] for photo in input]"
+      },
+      "output": {
+        "$jmespath": "output.scores"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Among these cat photographs, which one best guides the viewer's eye through a clear, pleasing visual rhythm? Choose the photo where the composition creates an intentional sequence of visual interest."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"text\", \"text\": \"Photo: \" + (photo.get(\"title\") or \"Untitled\") + (\" by \" + photo.get(\"photographer\") if photo.get(\"photographer\") else \"\")}] for photo in input]"
+      },
+      "output": {
+        "$jmespath": "output.scores"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Which cat photograph best achieves overall visual coherence and unified vision? Select the one where every element works together as an intentional whole reflecting a singular artistic vision."
+            }
+          ]
+        }
+      ],
+      "responses": {
+        "$starlark": "[[{\"type\": \"text\", \"text\": \"Photo: \" + (photo.get(\"title\") or \"Untitled\") + (\" by \" + photo.get(\"photographer\") if photo.get(\"photographer\") else \"\")}] for photo in input]"
+      },
+      "output": {
+        "$jmespath": "output.scores"
+      }
+    }
+  ],
+  "description": "Ranks cat photographs based on visual harmony and compositional excellence. Evaluates visual balance, color and tone unity, compositional flow, and overall coherence to identify images where every element works together intentionally to create a unified, compelling visual experience."
+}
